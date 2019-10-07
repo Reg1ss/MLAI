@@ -92,8 +92,8 @@ for year in Year:
     counter += 1
 
 
-# # IMDb
-# ia = IMDb()
+# IMDb
+ia = IMDb()
 
-# for movie in ia.search_movie('Batman'):
-#     print(movie)
+for movie in ia.search_movie('Batman'):
+    print(movie)
