@@ -17,7 +17,7 @@ If not, see http://www.gnu.org/licenses/.
 """
 
 # This starts the IPython Notebook pylab module, useful for plotting and interactive scientific computing
-%pylab inline
+# %pylab inline
 from pandas import read_csv
 
 # Read the data into a pandas DataFrame
