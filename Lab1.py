@@ -76,24 +76,34 @@ print('p(y,t) = ',p_y_and_t,' --- p(t)p(y|t) = ', p_t*p_y_given_t, ' --- p(y)p(t
 print('p(y,t) = ',p_y_and_t,' --- p(t)p(y) = ', p_t*p_y)
 
 # Marginal distribution
-Year = []
+# Year = []
 prob_death_Year = []
 total_films = (film_deaths.Body_Count).count()
-print(total_films)
+# print(total_films)
+prob_death = []
 for year in range(1949,2010):
     if((film_deaths.Year==year).sum() != 0):
-        deaths = (film_deaths.Year==year).sum()
-        prob_death = float(deaths) / float(total_films)
-        Year.append(year)
-        prob_death_Year.append(prob_death)
-counter = 0
-for year in Year:
-    print(year,prob_death_Year[counter])
-    counter += 1
+        deaths = (film_deaths.Body_Count[film_deaths.Year==year]>40).sum()
+        prob_death_year = float(deaths) / float(total_films)
+        # Year.append(year)
+        prob_death_Year.append(prob_death_year)
+marginal_probability = 0
+for prob_death_year in prob_death_Year:
+    marginal_probability += prob_death_year
+print("marginal probability is: ", marginal_probability)
 
+sumMovies_year_rating = 0;
+for year in range(2001,2006):
+    print(year)
+    Movies_year_rating = (film_deaths.IMDB_Rating[film_deaths.Year == year]>7.0).sum()
+    sumMovies_year_rating += Movies_year_rating
+print("Question1: ",sumMovies_year_rating)
 
-# IMDb
-ia = IMDb()
-
-for movie in ia.search_movie('Batman'):
-    print(movie)
+sumMovies_bodies_rating = (film_deaths.IMDB_Rating[film_deaths.Body_Count>20]>6).sum()
+prob_bodies_rating = sumMovies_bodies_rating/(film_deaths.Body_Count>20).sum()
+print("Question2: ",prob_bodies_rating)
+# # IMDb
+# ia = IMDb()
+#
+# for movie in ia.search_movie('Batman'):
+#     print(movie)
