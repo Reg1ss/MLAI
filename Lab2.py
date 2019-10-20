@@ -147,7 +147,7 @@ def objective_gradient_with_SGD(Y, U, V):
 #Training
 print("Training")
 iterations = 1000
-switcher = 1    # 0 for BGD and 1 for SGD
+switcher = 0    # 0 for BGD and 1 for SGD
 for i in range(iterations):
     if(switcher==0):
         obj, gU, gV = objective_gradient(Y, U, V)
