@@ -21,13 +21,13 @@ first want to identify how many unique users there are. We can use the unique
 method in pandas
 """
 indexes_unique_users = ratings['userId'].unique()   #get the unique data as a set. Return a vector
-n_users = indexes_unique_users.shape[0]     #user numbers
+n_users = indexes_unique_users.shape[0]     #users
 """ 
 We randomly select 'nUsers' users with their ratings. We first fix the seed
 of the random generator to make sure that we always get the same 'nUsers'
 """
 np.random.seed(YourStudentID)   #if seed is the same then every time we can get the same random set
-indexes_users = np.random.permutation(n_users)      #disorder the array and return new array(The difference with shuffle)
+indexes_users = np.random.permutation(n_users)      #disorder the array and return new array(The difference between shuffle)
 my_batch_users = indexes_users[0:nUsersInExample]
 """
 We will use now the list of 'my_batch_users' to create a matrix Y. 

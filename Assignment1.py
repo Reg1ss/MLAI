@@ -347,24 +347,43 @@ def BGD_batch(y, X, w, alpha, learning_rate, n_batch, max_iter = 500):
                     break
     return w
 
+y = y.to_frame()
 w_list = []
 mse_list = []
 hyper_parameter_list = []
 n_alpha = 5
 n_learning_rate = 5
 n_batch = 5
-alpha = np.logspace(-3,2,n_alpha)
+alpha = np.logspace(-4,-2,n_alpha)
 learning_rate = np.logspace(-2,-1,n_learning_rate)
-batch = np.linspace(300,1500,n_batch)
+batch = np.linspace(128,512,n_batch)
+#use training set to train
 for i in range(n_alpha):
-    print("i iteration: ", i)
+    print("i iteration: ", i+1)
     for j in range(n_learning_rate):
+        print("j iteration: ", j+1)
         for k in range(n_batch):
+            print("k iteration: ", k+1)
             w = pd.DataFrame(np.random.normal(size=(n_columns - 1, 1)) * 0.001, index=np.arange(n_columns - 1))
-            w = BGD_batch(y_training,X_training,w,alpha[i],learning_rate[j],int(batch[k]),max_iter=500)
+            w = BGD_batch(y_training,X_training,w,alpha[i],learning_rate[j],int(batch[k]),max_iter=1500)
             w_list.append(w)
             mse_list.append(compute_mse(y_test,X_test,w))
             hyper_parameter_list.append([alpha[i],learning_rate[j],batch[k]])
             # print(hyper_parameter_list)
-print(mse_list)
-print(hyper_parameter_list)
+hyper_parameter_index = mse_list.index(min(mse_list))
+print("The result with the training set:")
+print("The lowest mse is: ",min(mse_list))
+print("The best α, η and B are: ",hyper_parameter_list[hyper_parameter_index])
+
+#use all training data to train
+best_alpha = hyper_parameter_list[hyper_parameter_index][0]
+best_learning_rate = hyper_parameter_list[hyper_parameter_index][1]
+best_batch = hyper_parameter_list[hyper_parameter_index][2]
+w = pd.DataFrame(np.random.normal(size=(n_columns - 1, 1)) * 0.001, index=np.arange(n_columns - 1))
+w = BGD_batch(y,X,w,best_alpha,best_learning_rate,int(best_batch),max_iter=500)
+print("The result with all the training data:")
+print("The mse on the test set is: ",compute_mse(y_test,X_test,w))
+
+
+
+
