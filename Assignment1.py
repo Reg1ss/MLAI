@@ -15,7 +15,7 @@ print(air_quality.describe())
 
 #question 3- split data
 #random seed
-MyStudentID = 86116
+MyStudentID = 22846
 np.random.seed(MyStudentID)
 #number of data & number of attributes
 n_data = air_quality.shape[0]
@@ -168,8 +168,8 @@ alpha_min_mse_index = mse_for_alpha.index(min(mse_for_alpha))
 alpha_best = alpha[alpha_min_mse_index]
 print("MSE on validation set:")
 print(mse_for_alpha[alpha_min_mse_index])
-print(alpha_min_mse_index)
-# print(alpha_best)
+# print(alpha_min_mse_index)
+print("The best alpha is: ",alpha_best)
 
 #question7 -vaditation with closed form
 #preprocess test set
@@ -214,6 +214,7 @@ for j in column_data:
         continue
     # normalize training set
     test_set[j] = (test_set[j] - mean_value_per_column[j]) / std_value_per_column[j]
+# print(test_set["PT08.S1(CO)"])
 # print(test_set.std())
 
 #training with all training data
@@ -237,8 +238,9 @@ y_test = pd.DataFrame(y_test_series)
 X_test = test_set.loc[:,column_data[1]:column_data[12]]
 #get mse
 mse_test_set = ((np.dot(y_test[column_data[0]] - np.dot(w.iloc[alpha_min_mse_index],X_test.T), y_test[column_data[0]] - np.dot(w.iloc[alpha_min_mse_index],X_test.T).T))/n_test_set)
-print("MSE on test set:")
-print(mse_test_set)
+print("w of the closed form solution is: ")
+print(w.iloc[alpha_min_mse_index])
+print("MSE on test set: ",mse_test_set)
 #get absolute error
 (y_test[column_data[0]] - np.dot(X_test, w.iloc[alpha_min_mse_index])).hist(bins=1000)
 # plt.show()
@@ -316,11 +318,15 @@ def objective_gradient_batch(y_batch,X_batch,w,alpha,n):
     gw = alpha * w-2/n*(np.dot(X_batch.T,y_batch)-np.dot(np.dot(X_batch.T,X_batch),w))
     return gw
 
+def objective_gradient_batch_with_python_matrix(y_batch,X_batch,w,alpha,n):
+    gw = alpha * w-2/n*(X_batch.T.values @ y_batch.values - X_batch.T.values @ X_batch.values @ w.values)
+    gw = pd.DataFrame(gw)
+    return gw
+
 def BGD_batch(y, X, w, alpha, learning_rate, n_batch, max_iter = 500):
     # converge = False
     n_total_data = y.shape[0]
     total_batch = int(y.shape[0] // n_batch)
-    last_batch_start = int((y.shape[0] // n_batch) * n_batch)
     iteration_counter = 0;
     batch_gw = 0
     while(True):
@@ -336,42 +342,40 @@ def BGD_batch(y, X, w, alpha, learning_rate, n_batch, max_iter = 500):
             batch_gw = objective_gradient_batch(y_batch,X_batch,w,alpha,n_total_data) #/n_batch
             w -= learning_rate * batch_gw
             iteration_counter += 1
+            # last few data as a batch
             if(i==total_batch-1):
                 y_batch = y[(total_batch)*n_batch : n_total_data]
                 X_batch = X[(total_batch)*n_batch : n_total_data]
-                batch_gw = objective_gradient_batch(y_batch, X_batch, w, alpha, n_total_data)  # /n_batch
+                batch_gw = objective_gradient_batch(y_batch, X_batch, w, alpha, y_batch.shape[0]) #/X_batch.shape[0]
                 w -= learning_rate * batch_gw
                 iteration_counter += 1
                 #if the last batch is the final iteration
-                if(iteration_counter>max_iter):
+                if(iteration_counter>=max_iter):
                     break
     return w
 
-y = y.to_frame()
 w_list = []
 mse_list = []
 hyper_parameter_list = []
 n_alpha = 5
 n_learning_rate = 5
 n_batch = 5
-alpha = np.logspace(-4,-2,n_alpha)
+alpha = np.logspace(-3,1,n_alpha)
 learning_rate = np.logspace(-2,-1,n_learning_rate)
 batch = np.linspace(128,512,n_batch)
 #use training set to train
 for i in range(n_alpha):
-    print("i iteration: ", i+1)
     for j in range(n_learning_rate):
-        print("j iteration: ", j+1)
         for k in range(n_batch):
-            print("k iteration: ", k+1)
-            w = pd.DataFrame(np.random.normal(size=(n_columns - 1, 1)) * 0.001, index=np.arange(n_columns - 1))
-            w = BGD_batch(y_training,X_training,w,alpha[i],learning_rate[j],int(batch[k]),max_iter=1500)
+            print("alpha:", i + 1, " learning_rate:", j + 1, " batch iteration: ", k + 1)
+            w = pd.DataFrame(np.random.normal(size=(n_columns - 1, 1)) * 0.00, index=np.arange(n_columns - 1))
+            w = BGD_batch(y_training,X_training,w,alpha[i],learning_rate[j],int(batch[k]),max_iter=500)
             w_list.append(w)
             mse_list.append(compute_mse(y_test,X_test,w))
             hyper_parameter_list.append([alpha[i],learning_rate[j],batch[k]])
             # print(hyper_parameter_list)
 hyper_parameter_index = mse_list.index(min(mse_list))
-print("The result with the training set:")
+print("The result with the training data:")
 print("The lowest mse is: ",min(mse_list))
 print("The best α, η and B are: ",hyper_parameter_list[hyper_parameter_index])
 
@@ -379,9 +383,13 @@ print("The best α, η and B are: ",hyper_parameter_list[hyper_parameter_index])
 best_alpha = hyper_parameter_list[hyper_parameter_index][0]
 best_learning_rate = hyper_parameter_list[hyper_parameter_index][1]
 best_batch = hyper_parameter_list[hyper_parameter_index][2]
-w = pd.DataFrame(np.random.normal(size=(n_columns - 1, 1)) * 0.001, index=np.arange(n_columns - 1))
+w = pd.DataFrame(np.random.normal(size=(n_columns - 1, 1)) * 0.00, index=np.arange(n_columns - 1))
+y = y.to_frame()#or y doesn't have column index
 w = BGD_batch(y,X,w,best_alpha,best_learning_rate,int(best_batch),max_iter=500)
+print(" ")
 print("The result with all the training data:")
+print("w of the closed form solution is: ")
+print(w)
 print("The mse on the test set is: ",compute_mse(y_test,X_test,w))
 
 

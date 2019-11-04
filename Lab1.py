@@ -19,7 +19,6 @@ from imdb import IMDb
 #     zip.extract(name, '.')
 film_deaths = pd.read_csv('./R-vs-Python-master/Deadliest movies scrape/code/film-death-counts-Python.csv')
 print(film_deaths.describe())
-# film_deaths.describe?
 print(film_deaths['Year'])
 print(film_deaths['Body_Count'])
 

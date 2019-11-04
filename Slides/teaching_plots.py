@@ -5,10 +5,15 @@ import os
 from mpl_toolkits.mplot3d import Axes3D
 
 import GPy
+import Slides.mlai as mlai
 
 #import daft
 
+
 import mlai
+import Slides.mlai
+import Slides.gp_tutorial
+
 
 #from IPython.display import display, clear_output, HTML
 
