@@ -72,6 +72,9 @@ def fourier(x, num_basis=4, data_limits=[-1., 1.]):
             Phi[:, i:i+1] = np.cos(tau*frequency*x)
     return Phi
 
+Phi = polynomial(x,2)
+print("Phi")
+print(Phi)
 # Phi = polynomial(x,9,[1896.,2012.])
 Phi = radial(x,4,[1896.,2012.])
 # Phi = fourier(x,7,[1896.,2012.])
