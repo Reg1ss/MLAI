@@ -114,23 +114,26 @@ def fit(y, polynomials, *x):
 
 objective_error_on_training_set = []
 objective_error_on_validation_set = []
-for i in range(1, 18):
+for i in range(0, 19):
     arg = (x_for_training, i, 1956, 120)
     w = fit(y_for_training, polynomials, *arg)
     objective_error_on_training_set.append(objective(w, y_for_training, polynomials, *arg))
     arg = (x_for_validation, i, 1956, 120)
     objective_error_on_validation_set.append(objective(w, y_for_validation, polynomials, *arg))
+    print(min(objective_error_on_training_set))
+    # if(min(objective_error_on_training_set)==objective(w, y_for_training, polynomials, *arg)):
+    #     print(i)
 
 index_training_set = objective_error_on_training_set.index(min(objective_error_on_training_set))
 index_validation_set = objective_error_on_validation_set.index(min(objective_error_on_validation_set))
 
-# print("On training set:")
-# print("degree: ", index_training_set + 1)
-# print("objective error: ", min(objective_error_on_training_set))
-#
-# print("On validation set:")
-# print("degree: ", index_validation_set + 1)
-# print("objective error: ", min(objective_error_on_validation_set))
+print("On training set:")
+print("degree: ", index_training_set)
+print("objective error: ", min(objective_error_on_training_set))
+
+print("On validation set:")
+print("degree: ", index_validation_set + 1)
+print("objective error: ", min(objective_error_on_validation_set))
 
 # Question 5
 objective_error_for_leave_one_out = []
@@ -173,7 +176,6 @@ for i in range(1, 18):
     index = 0
     for k in range(x.shape[0]//K_fold_batch):
         if (k >= (x.shape[0] % K_fold_batch)):
-            print("Turn:", i)
             index_new = index + K_fold_batch
             batch_x = x[index:index_new ]
             batch_y = y[index:index_new]
@@ -188,7 +190,6 @@ for i in range(1, 18):
             objective_error_on_validation_set.append(objective(w, y_for_validation, polynomials, *arg))
             index = index_new
             continue
-        print("Turn:",i)
         index_new = index + (K_fold_batch + 1)
         batch_x = x[index:index_new]
         batch_y = y[index:index_new]
