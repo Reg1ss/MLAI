@@ -24,6 +24,7 @@ n_columns = air_quality.shape[1]
 indexes_data = np.random.permutation(n_data)
 #get the number of training_set & test_set
 n_training_set = int(n_data*0.7)
+print(type(n_training_set))
 n_test_set = n_data - n_training_set
 temp = np.empty((n_training_set,n_columns))
 # index_training_set = []

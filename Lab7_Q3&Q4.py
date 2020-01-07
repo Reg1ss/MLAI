@@ -11,15 +11,22 @@ x_train_mnist = mnist_data.data.numpy()
 
 # Determine the dimensions of images, number of features in the data and the number of different digits. 150 = number of prinicpal components.
 h_mnist, w_mnist = x_train_mnist.shape[1:]
-x_train_mnist_reshape = x_train_mnist.reshape((x_train_mnist.shape[0], h_mnist * w_mnist))
+print((x_train_mnist.shape))
+# print(h_mnist)
+# print(w_mnist)
+x_train_mnist_reshape = x_train_mnist.reshape((x_train_mnist.shape[0], h_mnist * w_mnist))  #Expand the high dimension metrix into low dimension metrix
 y_train_mnist = mnist_data.targets.numpy()
+# print(y_train_mnist.shape)
 no_features = x_train_mnist_reshape.shape[1]
 no_classes = np.unique(y_train_mnist).shape[0]
-no_components = 150
+# print(no_features)
+# print(no_classes)
+# print(x_train_mnist_reshape.shape)
+no_components = 150     #how many principle components we want to save
 
 # fit pca to the training data
 
-pca_mnist = PCA(n_components=no_components, svd_solver='randomized',
+pca_mnist = PCA(n_components=no_components, svd_solver='randomized',    #svd_solver: ‘auto’, ‘full’, ‘arpack’, ‘randomized’ last 2 for big data
                 whiten=True).fit(x_train_mnist_reshape)
 
 # top 30 eigenvalues
@@ -33,6 +40,7 @@ print('\nCumulative variance values:\n', cumulative_variance)
 plt.plot(range(1, cumulative_variance.shape[0] + 1), cumulative_variance)
 plt.title('Cumulative variance of principal components')
 plt.xlabel('Principle component number')
+plt.show()
 
 eigenfaces_mnist = pca_mnist.components_.reshape((no_components, h_mnist, w_mnist))
 
@@ -57,7 +65,7 @@ plot_gallery(eigenfaces_mnist, eigenface_titles_mnist, h_mnist, w_mnist, n_row=2
 # Reconstruct data using top 10 components
 
 pca_object = PCA(n_components=10, svd_solver='randomized', whiten=True) #components number
-x_train_mnist_intmde = pca_object.fit_transform(x_train_mnist_reshape)
+x_train_mnist_intmde = pca_object.fit_transform(x_train_mnist_reshape)  #features after PCA
 x_train_mnist_approx = pca_object.inverse_transform(x_train_mnist_intmde)
 
 # Reconstruction error calculation
@@ -153,19 +161,19 @@ plt.legend()
 plt.show()
 
 # k means implementation
-
-kmeans = KMeans(n_clusters=2, random_state=random_state).fit(x_train_mnist_2d)
-plt.subplot(122)
-plt.scatter(x_train_mnist_2d[:, 0][kmeans.labels_ == 1], x_train_mnist_2d[:, 1][kmeans.labels_ == 1], c = 'r', label = '2')#
-plt.scatter(x_train_mnist_2d[:, 0][kmeans.labels_ == 0], x_train_mnist_2d[:, 1][kmeans.labels_ == 0], c = 'b', label = '4')#
-plt.scatter(kmeans.cluster_centers_[:,0], kmeans.cluster_centers_[:,1])
-plt.title("K means fit")
-plt.legend()
-plt.show()
-
-# Plot top 10 eigenfaces
-print('\nPlotting top 10 eigenfaces..')
-print(len(eigenface_titles_mnist_2))
-plot_gallery(eigenfaces_mnist_2, eigenface_titles_mnist_2, h_mnist, w_mnist, n_row = 2, n_col = 5)
-plt.show()
+#
+# kmeans = KMeans(n_clusters=2, random_state=random_state).fit(x_train_mnist_2d)
+# plt.subplot(122)
+# plt.scatter(x_train_mnist_2d[:, 0][kmeans.labels_ == 1], x_train_mnist_2d[:, 1][kmeans.labels_ == 1], c = 'r', label = '2')#
+# plt.scatter(x_train_mnist_2d[:, 0][kmeans.labels_ == 0], x_train_mnist_2d[:, 1][kmeans.labels_ == 0], c = 'b', label = '4')#
+# plt.scatter(kmeans.cluster_centers_[:,0], kmeans.cluster_centers_[:,1])
+# plt.title("K means fit")
+# plt.legend()
+# plt.show()
+#
+# # Plot top 10 eigenfaces
+# print('\nPlotting top 10 eigenfaces..')
+# print(len(eigenface_titles_mnist_2))
+# plot_gallery(eigenfaces_mnist_2, eigenface_titles_mnist_2, h_mnist, w_mnist, n_row = 2, n_col = 5)
+# plt.show()
 

@@ -4,10 +4,32 @@ import torch.nn.functional as F
 import torch.optim as optim
 import  matplotlib.pyplot as plt
 from torchvision import datasets, transforms
+import numpy as np
+import torchvision
+
+# #Assignment2
+# scale = 0.3
+# #add nosie
+# def nosiy(img):
+#     img = img + scale * torch.randn(3,32,32)
+#     img = np.clip(img,-1,1)
+#     return img
+# torch.manual_seed(1722846)
+# transform = transforms.Compose(     #compose several processes to one
+#     [transforms.ToTensor(),     #transform a [0,255] PIL(python image library).image to tensor
+#      transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),    #normalize the value to [-1,1], first():mean, second():std  x = (x - mean(x))/stddev(x)
+#      transforms.Lambda(lambda img: nosiy(img))])
+#
+# trainset = torchvision.datasets.CIFAR10(root='./data', train=True,
+#                                         download=True, transform=transform)
+# testset = torchvision.datasets.CIFAR10(root='./data', train=False,
+#                                        download=True, transform=transform)
+# trainset = list(trainset)[:4096]
+
 
 mnist_data = datasets.MNIST('data', train=True, download=True, transform=transforms.ToTensor()) #train: True for training set & False for test set
 print(len(mnist_data))
-mnist_data = list(mnist_data)[:4096]
+mnist_data = list(mnist_data)[:4160]
 print(len(mnist_data))
 
 class Autoencoder(nn.Module):
@@ -55,9 +77,9 @@ max_epochs = 20
 #Choose mean square error loss
 criterion = nn.MSELoss()
 #Choose the Adam optimiser
-optimizer = torch.optim.SGD(myAE.parameters(), lr=learning_rate, weight_decay=1e-5)
+optimizer = torch.optim.Adam(myAE.parameters(), lr=learning_rate, weight_decay=1e-5)
 #Specify how the data will be loaded in batches (with random shffling)
-train_loader = torch.utils.data.DataLoader(mnist_data, batch_size=batch_size, shuffle=True)
+train_loader = torch.utils.data.DataLoader(mnist_data, batch_size=batch_size, shuffle=True) #data sampling apparatus
 #Storage
 outputs = []
 
@@ -68,17 +90,12 @@ loss3 = 0
 for epoch in range(max_epochs):
     for data in train_loader:
         img, label = data
+        # print(img.size())
         optimizer.zero_grad()
         recon = myAE(img)
         loss = criterion(recon, img)
         loss.backward()
         optimizer.step()
-    if (counter == 0):
-        loss1 = loss
-    if (counter == 2):
-        loss3 = loss
-        print("loss3-loss1: ", loss1 - loss3)
-    counter += 1
     if (epoch % 3) == 0:
         print('Epoch:{}, Loss:{:.4f}'.format(epoch+1, float(loss)))
     outputs.append((epoch, img, recon),)
