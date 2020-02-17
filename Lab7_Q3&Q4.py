@@ -11,7 +11,7 @@ x_train_mnist = mnist_data.data.numpy()
 
 # Determine the dimensions of images, number of features in the data and the number of different digits. 150 = number of prinicpal components.
 h_mnist, w_mnist = x_train_mnist.shape[1:]
-print((x_train_mnist.shape))
+# print((x_train_mnist.shape))
 # print(h_mnist)
 # print(w_mnist)
 x_train_mnist_reshape = x_train_mnist.reshape((x_train_mnist.shape[0], h_mnist * w_mnist))  #Expand the high dimension metrix into low dimension metrix

@@ -15,7 +15,7 @@ sgx1 = normal([2.,2.], [[s2, 0.], [0.,s2]], nSamples)
 # setting the labels for each category
 sgy0 = np.zeros((nSamples,))
 sgy1 = np.ones((nSamples,))
-
+#xyz
 sgx = np.concatenate((sgx0, sgx1))
 sgy = np.concatenate((sgy0, sgy1))
 
